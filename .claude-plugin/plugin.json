@@ -1,0 +1,15 @@
+{
+  "name": "weedeat",
+  "description": "Survey a repo's asset churn and worktree/branch sprawl, report findings, and clean up on explicit confirmation.",
+  "author": {
+    "name": "AllHailSeizure",
+    "email": "natebosma@gmail.com",
+    "url": "https://github.com/AllHailSeizure"
+  },
+  "homepage": "https://github.com/AllHailSeizure/weedeat",
+  "repository": "https://github.com/AllHailSeizure/weedeat",
+  "license": "MIT",
+  "skills": [
+    "./skills/"
+  ]
+}

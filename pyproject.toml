@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "weedeat"
+version = "0.2.0"
+description = "Deterministic branch and worktree scanner with a guarded cleanup prompt"
+requires-python = ">=3.10"
+
+[project.scripts]
+weedeat = "weedeat.cli:main"
+
+[tool.setuptools]
+packages = ["weedeat"]

@@ -1,0 +1,15 @@
+{
+  "name": "weedeat",
+  "owner": {
+    "name": "AllHailSeizure",
+    "email": "natebosma@gmail.com",
+    "url": "https://github.com/AllHailSeizure"
+  },
+  "plugins": [
+    {
+      "name": "weedeat",
+      "source": "./",
+      "description": "Survey a repo's asset churn and worktree/branch sprawl, report findings, and clean up on explicit confirmation."
+    }
+  ]
+}
