@@ -7,7 +7,7 @@
   },
   "plugins": [
     {
-      "name": "weedeat",
+      "name": "Weedeat",
       "source": "./",
       "description": "Survey a repo's asset churn and worktree/branch sprawl, report findings, and clean up on explicit confirmation."
     }
