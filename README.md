@@ -51,6 +51,12 @@ requires confirmation. Use `branch <name> tag <0-4>` or
 be removed by any trim command. Tags are written to
 `.synapse/weedeat-tags.json`; attached branches and worktrees share one tag.
 
+`shear <branch>` fetches and compares that branch to `origin/<branch>`. Local
+working-tree changes whose content already matches the remote are reverted
+(tracked files restore to `HEAD`; untracked duplicates of remote files are
+removed). Local-only edits are left alone. Like trim, shear previews and asks
+before writing.
+
 ## Development
 
 ```bash
