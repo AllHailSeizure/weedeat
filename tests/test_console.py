@@ -106,6 +106,31 @@ class CommandConsoleTest(unittest.TestCase):
         CommandConsole("repo", survey(), inputs("trim 2", "y", "quit"), output).run()
         execute.assert_called_once()
 
+    @patch("weedeat.console.run_survey", side_effect=lambda *_args, **_kwargs: survey())
+    @patch("weedeat.console.execute_shear", return_value=[])
+    @patch("weedeat.console.plan_shear")
+    def test_shear_requires_confirmation(self, plan, execute, _scan) -> None:
+        from weedeat.shear import ShearPlan
+
+        plan.return_value = ShearPlan(
+            branch="main",
+            remote_ref="origin/main",
+            worktree="repo",
+            paths=["dup.txt"],
+        )
+        output = io.StringIO()
+        CommandConsole("repo", survey(), inputs("shear main", "n", "quit"), output).run()
+        execute.assert_not_called()
+        self.assertIn("Shear cancelled", output.getvalue())
+
+        CommandConsole("repo", survey(), inputs("shear main", "y", "quit"), output).run()
+        execute.assert_called_once()
+
+    def test_help_lists_shear(self) -> None:
+        output = io.StringIO()
+        CommandConsole("repo", survey(), inputs("help", "quit"), output).run()
+        self.assertIn("shear <branch>", output.getvalue())
+
     def test_unknown_command_shows_help_hint(self) -> None:
         output = io.StringIO()
         CommandConsole("repo", survey(), inputs("wat", "quit"), output).run()

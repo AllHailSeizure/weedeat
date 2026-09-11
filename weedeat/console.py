@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Callable, TextIO
 
 from weedeat.scan import git, read_manifest, run_survey
+from weedeat.shear import execute_shear, plan_shear
 from weedeat.tags import remove_tag, set_tag, worktree_key
 from weedeat.trim import execute_trim, trim_candidates
 
@@ -102,6 +103,8 @@ class CommandConsole:
             self._trim_command(parts[1])
         elif command == "diff" and len(parts) == 2:
             self._diff_command(parts[1])
+        elif command == "shear" and len(parts) == 2:
+            self._shear_command(parts[1])
         else:
             self._write("Unknown command. Type help.")
         return False
@@ -129,6 +132,7 @@ class CommandConsole:
         self._write("worktree <path> tag <0-4>")
         self._write("worktree <path> untag")
         self._write("diff <branch>")
+        self._write("shear <branch>")
         self._write("trim <1-4>")
         self._write("quit")
 
@@ -237,6 +241,35 @@ class CommandConsole:
         base = review_base(self.root)
         self._write(f"git diff {base}...{branch}")
         self._write(branch_diff(self.root, base, branch))
+
+    def _shear_command(self, branch: str) -> None:
+        try:
+            plan = plan_shear(self.root, branch)
+        except ValueError as error:
+            self._write(str(error))
+            return
+        if not plan.paths:
+            self._write(
+                f"Nothing to shear on {branch}: no local dirt already present on "
+                f"{plan.remote_ref}."
+            )
+            return
+        self._write(
+            f"shear {branch} will revert local changes already on {plan.remote_ref}:"
+        )
+        for path in plan.paths:
+            self._write(f"- {path}")
+        try:
+            confirmed = self.input("Proceed? [y/N] ").strip().lower()
+        except (EOFError, KeyboardInterrupt, StopIteration):
+            confirmed = ""
+        if confirmed not in ("y", "yes"):
+            self._write("Shear cancelled.")
+            return
+        for path, success, message in execute_shear(self.root, plan):
+            status = "reverted" if success else "kept"
+            self._write(f"{status}: {path} — {message}")
+        self.refresh()
 
     def refresh(self) -> None:
         self.result = run_survey(self.root, no_fetch=True)
